@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration Form</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .form-header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-header p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1em;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input[readonly] {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+            color: #666;
+        }
+
+        .form-group input[readonly]:focus {
+            border-color: #e0e0e0;
+            box-shadow: none;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-note {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        .form-note strong {
+            color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-back {
+            background: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .success-message {
+            display: none;
+            background: #d4edda;
+            border: 2px solid #48c774;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            .form-header h1 {
+                font-size: 1.6em;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: white;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .field-info {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 5px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-header">
+            <h1>✅ Event Registration</h1>
+            <p>Complete your registration to secure your spot</p>
+        </div>
+
+        <div class="form-container">
+            <div class="success-message" id="successMessage">
+                ✓ Registration submitted successfully! We'll send you confirmation details shortly.
+            </div>
+
+            <form id="registrationForm">
+                <div class="form-note">
+                    <strong>📌 Note:</strong> The Event Name is automatically filled from the selected event and cannot be modified.
+                </div>
+
+                <!-- Event Title (Read-only) -->
+                <div class="form-group">
+                    <label for="eventTitle">Selected Event</label>
+                    <input 
+                        type="text" 
+                        id="eventTitle" 
+                        name="eventTitle" 
+                        readonly 
+                        placeholder="Event will be auto-filled"
+                    >
+                    <div class="field-info">Auto-filled from selected event</div>
+                </div>
+
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <input 
+                        type="text" 
+                        id="fullName" 
+                        name="fullName" 
+                        required 
+                        placeholder="Enter your full name"
+                    >
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required 
+                        placeholder="Enter your email"
+                    >
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        required 
+                        placeholder="Enter your phone number"
+                    >
+                </div>
+
+                <!-- Organization -->
+                <div class="form-group">
+                    <label for="organization">Organization</label>
+                    <input 
+                        type="text" 
+                        id="organization" 
+                        name="organization" 
+                        placeholder="Enter your organization (optional)"
+                    >
+                </div>
+
+                <!-- Dietary Preferences -->
+                <div class="form-group">
+                    <label for="dietary">Dietary Preferences</label>
+                    <select id="dietary" name="dietary">
+                        <option value="">Select an option</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="vegan">Vegan</option>
+                        <option value="non-vegetarian">Non-Vegetarian</option>
+                        <option value="no-preference">No Preference</option>
+                    </select>
+                </div>
+
+                <!-- Special Requirements -->
+                <div class="form-group">
+                    <label for="requirements">Special Requirements</label>
+                    <textarea 
+                        id="requirements" 
+                        name="requirements" 
+                        placeholder="Any special accommodations or requirements?"
+                    ></textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button type="submit" class="btn btn-submit">Register</button>
+                    <a href="index.html" class="btn btn-back">Back</a>
+                </div>
+            </form>
+        </div>
+
+        <div class="form-footer">
+            <p>&copy; 2026 Event Management System. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Handle form submission
+            $('#registrationForm').submit(function(e) {
+                e.preventDefault();
+                
+                // Get form data
+                var formData = {
+                    event: $('#eventTitle').val(),
+                    fullName: $('#fullName').val(),
+                    email: $('#email').val(),
+                    phone: $('#phone').val(),
+                    organization: $('#organization').val(),
+                    dietary: $('#dietary').val(),
+                    requirements: $('#requirements').val(),
+                    registrationDate: new Date().toLocaleString()
+                };
+                
+                // Validate required fields
+                if (!formData.fullName || !formData.email || !formData.phone || !formData.event) {
+                    alert('Please fill all required fields!');
+                    return false;
+                }
+                
+                // Validate email format
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(formData.email)) {
+                    alert('Please enter a valid email address!');
+                    return false;
+                }
+                
+                // Store registration data in localStorage
+                localStorage.setItem('registrationData', JSON.stringify(formData));
+                
+                // Clear session storage
+                sessionStorage.removeItem('selectedEvent');
+                
+                // Show success message
+                $('#successMessage').addClass('show');
+                
+                // Reset form
+                this.reset();
+                
+                // Redirect after 2 seconds
+                setTimeout(function() {
+                    window.location.href = 'index.html';
+                }, 2000);
+                
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>

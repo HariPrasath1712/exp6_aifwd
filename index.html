@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management System</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .event {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .event:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .event.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .event.active h3 {
+            color: #fff;
+        }
+
+        .event.active p {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .event h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .event p {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .event p::before {
+            content: "📅";
+            font-size: 1.3em;
+        }
+
+        .event-details {
+            display: none;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .event.active .event-details {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: white;
+        }
+
+        .event-details h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .event.active .event-details h4 {
+            color: white;
+        }
+
+        .event-details p {
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .event.active .event-details p {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-details {
+            background: #667eea;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-details:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-register {
+            background: #48c774;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-register:hover {
+            background: #2f9e44;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(72, 199, 116, 0.4);
+        }
+
+        .event.active .btn-details {
+            background: white;
+            color: #667eea;
+        }
+
+        .event.active .btn-details:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .event.active .btn-register {
+            background: #48c774;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Event Management System</h1>
+            <p>Discover and Register for Amazing Events</p>
+        </div>
+
+        <div class="events-grid">
+            <!-- Event 1 -->
+            <div class="event">
+                <h3>Tech Conference 2026</h3>
+                <p>March 15, 2026</p>
+                <button class="btn btn-details">Show Details</button>
+                
+                <div class="event-details">
+                    <h4>Event Details</h4>
+                    <p>Join us for the biggest tech conference of the year! Learn from industry experts, network with professionals, and discover the latest innovations in technology. This 2-day event features keynote speeches, workshops, and hands-on demonstrations.</p>
+                    <p><strong>Location:</strong> Convention Center, Downtown</p>
+                    <p><strong>Duration:</strong> 2 Days</p>
+                    <p><strong>Attendees Expected:</strong> 5000+</p>
+                    <div class="button-group">
+                        <button class="btn btn-register">Register Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event 2 -->
+            <div class="event">
+                <h3>Web Development Workshop</h3>
+                <p>April 5, 2026</p>
+                <button class="btn btn-details">Show Details</button>
+                
+                <div class="event-details">
+                    <h4>Event Details</h4>
+                    <p>Master the latest web development technologies! This intensive workshop covers HTML5, CSS3, JavaScript, React, and more. Perfect for beginners and intermediate developers who want to level up their skills.</p>
+                    <p><strong>Location:</strong> Tech Hub, Suite 200</p>
+                    <p><strong>Duration:</strong> 5 Half-days</p>
+                    <p><strong>Attendees Expected:</strong> 200</p>
+                    <div class="button-group">
+                        <button class="btn btn-register">Register Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event 3 -->
+            <div class="event">
+                <h3>Digital Marketing Summit</h3>
+                <p>April 20, 2026</p>
+                <button class="btn btn-details">Show Details</button>
+                
+                <div class="event-details">
+                    <h4>Event Details</h4>
+                    <p>Explore cutting-edge digital marketing strategies and tools! Learn about SEO, social media marketing, content strategy, and analytics from top marketing professionals. Network with peers and grow your business.</p>
+                    <p><strong>Location:</strong> Business Plaza, Conference Hall A</p>
+                    <p><strong>Duration:</strong> 1 Day</p>
+                    <p><strong>Attendees Expected:</strong> 800</p>
+                    <div class="button-group">
+                        <button class="btn btn-register">Register Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 Event Management System. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
